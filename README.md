@@ -174,14 +174,20 @@ A high-volume attack is also a log-retention attack. The noise can push evidence
 .
 ├── README.md
 ├── docs/
-│   ├── AD-Lab-Walkthrough.pdf           # full walkthrough, 224 annotated screenshots
-│   ├── AD-Lab-Walkthrough.docx          # editable source
+│   ├── Cloud-Based Active Directory Setup and User Management-Walkthrough.pdf   # full walkthrough, 224 annotated screenshots
 │   └── bruteforce-timeline.png          # attack volume chart
 ├── logs/
-│   └── DC01-Security-Log-Analysis.xlsx  # event summary, notable events, hourly attack data
+│   ├── DC01-EventID-Summary.csv         # every Event ID, with counts and first/last seen
+│   ├── DC01-NotableEvents.csv           # all account, group and privilege events (207 rows)
+│   ├── DC01-BruteForce-Hourly.csv       # hourly failed vs successful logon counts
+│   └── DC01-SecurityEvents.csv          # full filtered export (81,861 events)
 └── scripts/
-    └── Export-SecurityEvents.ps1        # extracts and filters events from the .evtx
+    └── FileExport.ps1                   # extracts and filters events from the .evtx
 ```
+
+The walkthrough documents every step with annotated screenshots — from resource group creation through to Security log analysis and the incident write-up in Step 8.
+
+Identifiers have been redacted from the screenshots: the browser and Remote Desktop title bars, which carry subscription and host identifiers, are blacked out throughout. No IP addresses, usernames or email addresses appear in the exported log data.
 
 The walkthrough documents every step with annotated screenshots — from resource group creation through to Security log analysis and the incident write-up in Step 8. Start with the PDF; GitHub will not preview the `.docx`.
 
