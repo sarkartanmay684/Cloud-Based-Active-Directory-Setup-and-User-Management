@@ -194,7 +194,7 @@ The workbook has four tabs: a summary of the findings, every Event ID with count
 - The forest root domain is `corp.corp-local.com` — a subdomain of a routable parent, rather than the `.local` suffix commonly used in tutorials. This was deliberate: Microsoft advises against `.local` domains because the suffix is reserved for multicast DNS (mDNS/Bonjour), which causes name resolution conflicts on macOS and Linux clients. Production deployments should follow the same pattern used here.
 - The NetBIOS domain name is `CORP`, which is why logons take the form `corp\username` regardless of the longer DNS name.
 - Azure account creation and portal sign-in are not documented here, as those screens contain personal billing and identity information.
-- All accounts and credentials shown belong to a throwaway lab environment built solely for this project. Subscription identifiers, tenant identifiers, account email addresses and public IP addresses have been redacted from the screenshots, and no IP addresses, usernames or email addresses appear in the exported log data.
+- All accounts and credentials shown belong to a throwaway lab environment built solely for this project, which has since been decommissioned. No IP addresses, usernames or email addresses appear in the exported log data.
 
 ---
 
