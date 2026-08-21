@@ -1,0 +1,17 @@
+EventID,Description,Category,Count,FirstSeen,LastSeen
+4624,Successful logon,Authentication,7830,2026-08-15 13:32:43,2026-08-17 09:09:12
+4625,Failed logon,Authentication,57500,2026-08-15 13:32:20,2026-08-17 09:09:21
+4627,Group membership information,Session Detail,7830,2026-08-15 13:32:43,2026-08-17 09:09:12
+4648,Logon using explicit credentials,Authentication,12,2026-08-15 19:13:19,2026-08-17 05:00:15
+4672,Special privileges assigned to new logon,Session Detail,6970,2026-08-15 13:32:43,2026-08-17 09:09:12
+4688,A new process has been created,Process,1524,2026-08-15 13:36:46,2026-08-17 09:06:18
+4702,Scheduled task updated,Scheduled Task,177,2026-08-15 14:20:19,2026-08-17 08:48:12
+4720,User account created,Account Management,1,2026-08-17 09:03:46,2026-08-17 09:03:46
+4722,User account enabled,Account Management,3,2026-08-17 02:52:48,2026-08-17 09:03:46
+4723,Password change attempted by user,Account Management,0,not present in log,not present in log
+4724,Password reset by administrator,Account Management,4,2026-08-17 02:47:19,2026-08-17 09:06:11
+4725,User account disabled,Account Management,3,2026-08-17 01:59:39,2026-08-17 02:52:54
+4726,User account deleted,Account Management,1,2026-08-17 02:05:08,2026-08-17 02:05:08
+4732,User added to a security group,Group Change,1,2026-08-17 02:19:48,2026-08-17 02:19:48
+4733,User removed from a security group,Group Change,2,2026-08-17 02:20:56,2026-08-17 02:45:27
+4735,Security-enabled local group modified,Group Change,3,2026-08-17 02:19:48,2026-08-17 02:45:27
