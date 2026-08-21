@@ -46,7 +46,7 @@ The critical design constraint: **both VMs sit in the same virtual network and r
 | Domain Admin | `corp\tanmay_admin` | Used for all administrative tasks |
 | Test Users | `alice`, `bob`, `charlie` | Created in the `TestUsers` organizational unit |
 
-**Cost note:** B2als_v2 was selected over B2s/B2as deliberately — roughly $17.96/month compute versus a materially higher figure for the alternatives, which matters on a free-tier subscription with a fixed credit. Total run cost per VM including OS disk and public IP came to approximately $41/month; both VMs were deallocated when not in use to conserve credit.
+**Cost note:** B2als_v2 was selected over B2s/B2as deliberately — roughly $17.96/month compute versus a materially higher figure for the alternatives, which matters on a free-tier subscription with a fixed credit. Total run cost per VM including OS disk and public IP came to approximately $41/month; both VMs were deallocated once the lab was complete to conserve credit.
 
 ---
 
