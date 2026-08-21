@@ -127,25 +127,31 @@ Every administrative action in Active Directory leaves a trace. These are the ev
 
 The exported Security log was not supposed to be the interesting part of this project. It turned out to be.
 
-Between **14 August 22:29** and **17 August 04:16** — a 54-hour window — the domain controller recorded:
+While reviewing the log, the number of Event ID 4625 (failed logon) records was far higher than the lab itself could explain. A few failed logons would be expected from mistyped passwords during testing. There were tens of thousands.
 
 | Metric | Value |
 |---|---|
-| Failed logons (Event ID 4625) | **49,853** |
-| Successful logons (4624) | 9,629 |
-| Failed-to-successful ratio | **5.2 : 1** |
-| Sustained rate | **927 per hour** (15.4 per minute) |
-| Hours with attack traffic | **55 of 55** — continuous, no gaps |
+| Failed logons (Event ID 4625) | **57,500** |
+| Successful logons (4624) | 7,830 |
+| Failed-to-successful ratio | **7.3 : 1** |
+| Observation window | 43.6 hours (15 Aug 13:32 – 17 Aug 09:09) |
+| Mean rate | **1,318 per hour** (~22 per minute) |
+| Peak hour | 16 Aug 23:00 — **3,501** failed logons |
+| Hours with attack traffic | **45 of 45** — continuous, no gaps |
 
-This is an automated credential-guessing campaign against RDP, and it began within hours of the VM being created with port 3389 open to `Any` source — the default the Azure VM wizard offers. No one advertised this host. Internet-wide scanners found it on their own.
+![RDP brute-force activity per hour](docs/bruteforce-timeline.png)
 
-**Two things follow from this that no tutorial teaches:**
+Two concentrated bursts sit on top of a persistent 200–600/hour baseline that never stops. That shape is characteristic of automated tooling: the baseline is opportunistic internet-wide scanning, the peaks are dictionary runs against this host once it had been identified as reachable.
 
-**1. Exposure is not theoretical.** The gap between "3389 is open to the internet" and "something is actively trying to break in" was measured in hours, not weeks. Restricting the NSG source to a single administrative IP stopped it.
+**Root cause.** The Azure VM wizard opens inbound RDP (3389) with the source set to `Any`, and that default was accepted so the lab could be reached remotely. Nothing about this environment was published anywhere — scanners found it independently, and traffic began within hours of deployment. Scoping the NSG rule to a single administrative IP stopped it.
 
-**2. The attack destroyed evidence.** The Security log has a fixed maximum size and wraps when full. 49,853 junk events in 54 hours filled it, and the earlier records were evicted — which is why `4720` (user account created) and `4723` (password change) appear in the walkthrough screenshots but are **absent from the exported log**. The accounts were provisioned before 14 August; those events no longer exist on disk.
+### Secondary finding: the attack destroyed evidence
 
-That second point is a real operational lesson. A high-volume attack is also a log-retention attack: it can push the evidence of an earlier, quieter intrusion out of the log entirely. In production the mitigations are to increase the Security log size, forward events to a SIEM in near-real time, or both — which is precisely why organisations centralise logging rather than relying on local `.evtx` files.
+The Windows Security log has a fixed maximum size and overwrites its oldest records when full. 57,500 junk records in under two days consumed that capacity.
+
+The consequence is visible in the export: the oldest surviving record is from 15 August, though the environment was built and the test accounts provisioned several days earlier. Event ID **4723** is absent entirely and only a single **4720** survives — despite the Step 4 screenshots showing those events at the time the accounts were created. The evidence exists in the screenshots but no longer in the log.
+
+A high-volume attack is also a log-retention attack. The noise can push evidence of an earlier, quieter intrusion out of the log before anyone reviews it — which is the practical argument for increasing Security log size, forwarding to a SIEM in near real time, or both, rather than treating local `.evtx` files as a system of record.
 
 ---
 
@@ -155,8 +161,8 @@ That second point is a real operational lesson. A high-volume attack is also a l
 - **Windows Server administration** — AD DS role installation, domain controller promotion, forest and DNS configuration, DSRM
 - **Identity and access management** — organizational unit design, user provisioning, group membership, password policy, least-privilege remote access
 - **Security monitoring** — Windows Security log analysis, Event ID filtering and correlation, evidence export to `.evtx` and CSV for SIEM ingestion
-- **Incident analysis** — identified and quantified a live RDP brute-force campaign from log data (~50,000 failed logons over 54 hours), determined root cause, and remediated at the network layer
-- **PowerShell** — parsed and filtered a 79,000-event Security log with `Get-WinEvent`, exporting a scoped dataset for analysis
+- **Incident analysis** — identified and quantified a live RDP brute-force campaign from log data (57,500 failed logons over 44 hours), determined root cause, and remediated at the network layer
+- **PowerShell** — parsed and filtered an 81,000-event Security log with `Get-WinEvent`, exporting a scoped dataset for analysis
 - **Cloud security posture** — Microsoft Defender for Cloud recommendations, attack surface reduction through network-level access control
 - **Troubleshooting** — DNS resolution failures, domain join errors, authentication versus authorization distinctions
 
@@ -168,13 +174,18 @@ That second point is a real operational lesson. A high-volume attack is also a l
 .
 ├── README.md
 ├── docs/
-│   ├── AD-Lab-Walkthrough.pdf        # full walkthrough, ~190 annotated screenshots
-│   └── AD-Lab-Walkthrough.docx       # editable source
-└── logs/
-    └── DC01-SecurityLogs.evtx        # exported Security log from the domain controller
+│   ├── AD-Lab-Walkthrough.pdf           # full walkthrough, 224 annotated screenshots
+│   ├── AD-Lab-Walkthrough.docx          # editable source
+│   └── bruteforce-timeline.png          # attack volume chart
+├── logs/
+│   └── DC01-Security-Log-Analysis.xlsx  # event summary, notable events, hourly attack data
+└── scripts/
+    └── Export-SecurityEvents.ps1        # extracts and filters events from the .evtx
 ```
 
-The walkthrough documents every step with annotated screenshots — from resource group creation through to Security log analysis. Start with the PDF; GitHub will not preview the `.docx`.
+The walkthrough documents every step with annotated screenshots — from resource group creation through to Security log analysis and the incident write-up in Step 8. Start with the PDF; GitHub will not preview the `.docx`.
+
+The workbook has four tabs: a summary of the findings, every Event ID with counts, all 207 account and group events in time order, and the hourly attack data behind the chart above.
 
 ---
 
@@ -183,8 +194,8 @@ The walkthrough documents every step with annotated screenshots — from resourc
 - The forest root domain is `corp.corp-local.com` — a subdomain of a routable parent, rather than the `.local` suffix commonly used in tutorials. This was deliberate: Microsoft advises against `.local` domains because the suffix is reserved for multicast DNS (mDNS/Bonjour), which causes name resolution conflicts on macOS and Linux clients. Production deployments should follow the same pattern used here.
 - The NetBIOS domain name is `CORP`, which is why logons take the form `corp\username` regardless of the longer DNS name.
 - Azure account creation and portal sign-in are not documented here, as those screens contain personal billing and identity information.
-- All credentials shown in screenshots belong to a throwaway lab environment that has since been decommissioned.
+- All accounts and credentials shown belong to a throwaway lab environment built solely for this project. Subscription identifiers, tenant identifiers, account email addresses and public IP addresses have been redacted from the screenshots, and no IP addresses, usernames or email addresses appear in the exported log data.
 
 ---
 
-*Built as a self-directed lab to develop practical SOC and Windows security skills.*
+*Built as a self-directed lab to develop practical SOC, identity and Windows security skills.*
