@@ -139,7 +139,7 @@ While reviewing the log, the number of Event ID 4625 (failed logon) records was 
 | Peak hour | 16 Aug 23:00 — **3,501** failed logons |
 | Hours with attack traffic | **45 of 45** — continuous, no gaps |
 
-![RDP brute-force activity per hour](docs/bruteforce-timeline.png)
+![RDP brute-force activity per hour](bruteforce-timeline.png)
 
 Two concentrated bursts sit on top of a persistent 200–600/hour baseline that never stops. That shape is characteristic of automated tooling: the baseline is opportunistic internet-wide scanning, the peaks are dictionary runs against this host once it had been identified as reachable.
 
