@@ -189,10 +189,6 @@ The walkthrough documents every step with annotated screenshots — from resourc
 
 Identifiers have been redacted from the screenshots: the browser and Remote Desktop title bars, which carry subscription and host identifiers, are blacked out throughout. No IP addresses, usernames or email addresses appear in the exported log data.
 
-The walkthrough documents every step with annotated screenshots — from resource group creation through to Security log analysis and the incident write-up in Step 8. Start with the PDF; GitHub will not preview the `.docx`.
-
-The workbook has four tabs: a summary of the findings, every Event ID with counts, all 207 account and group events in time order, and the hourly attack data behind the chart above.
-
 ---
 
 ## Notes
